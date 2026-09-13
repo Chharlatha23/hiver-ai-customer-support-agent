@@ -1,0 +1,10 @@
+data/raw/
+twcs/twcs.csv
+archive.zip
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.log
