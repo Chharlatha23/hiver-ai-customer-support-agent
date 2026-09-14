@@ -1,6 +1,5 @@
 import argparse
 import pandas as pd
-import numpy as np
 import os
 
 def parse_args():
@@ -9,13 +8,7 @@ def parse_args():
     parser.add_argument('--output_dir', type=str, default='reports', help='Directory for reports')
     return parser.parse_args()
 
-def safe_split(text):
-    if pd.isna(text):
-        return []
-    return [x.strip() for x in str(text).split(',') if x.strip()]
-
 def reconstruct_conversations(df):
-    print("Reconstructing conversations...")
     
     # Ensure strings for IDs
     df['tweet_id'] = df['tweet_id'].astype(str)
@@ -104,7 +97,7 @@ def explore_dataset(df, output_dir):
         f.write(f"- **Root Tweets**: {root_tweets_count}\n")
         f.write(f"- **Orphan/Incomplete Tweets**: {orphan_count}\n\n")
         f.write("## Conversation Reconstruction Approach\n")
-        f.write("Root tweets were identified by tracing back the `in_response_to_tweet_id` until a tweet with no parent or a parent not in the dataset was found. The ID of this root tweet serves as the `conversation_id`. This approach handles linear and branching threads but relies on the presence of contiguous reply chains.\n\n")
+        f.write("Root tweets were identified by tracing back the `in_response_to_tweet_id` until a tweet with no parent or a parent not in the dataset was found. The ID of this root tweet serves as the `conversation_id`. This groups messages by root and does not explicitly model branch structure.\n\n")
         f.write("## Limitations\n")
         f.write("- Missing tweets in the dataset create orphans and break conversations into multiple smaller threads.\n")
         f.write("- `response_tweet_id` is useful for forward traversal but we only needed backward traversal to find the root.\n")
@@ -119,7 +112,7 @@ def evaluate_candidates(df, output_dir):
     # Support accounts are outbound non-numeric authors (usually brands have text handles)
     outbound_df = df[~df['inbound']]
     brand_counts = outbound_df['author_id'].value_counts()
-    # Take top 20 by volume to analyze
+    # Take top 20 by volume to analyze (heuristic search, not exhaustive)
     top_brands = brand_counts.head(20).index.tolist()
     
     candidate_metrics = []
@@ -221,10 +214,10 @@ def write_selection_report(metrics_df, output_dir):
         f.write(f"- The project treats `{selected_brand['brand']}` as the operational brand label for subsequent phases.\n\n")
 
         f.write("### Justification\n")
-        f.write("AmazonHelp is preferred based on a balanced evaluation:\n")
+        f.write("Usable-pair volume is the primary ranking criterion, followed by qualitative comparison:\n")
         f.write(f"- **Volume and Coverage**: Highest number of usable pairs ({selected_brand['usable_pairs']}) and a strong pair ratio ({selected_brand['pair_ratio_pct']}%). While the ranking is largely volume-dominated, the scale ensures sufficient examples for downstream tasks.\n")
         f.write(f"- **Diversity**: Largest pool of unique customers ({selected_brand['unique_customers']}) and unique conversations ({selected_brand['unique_conversations']}), providing excellent diversity for intent discovery.\n")
-        f.write(f"- **Depth**: 51,260 multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is {selected_brand['avg_conv_length']} (Conversation length does not guarantee successful resolution).\n\n")
+        f.write(f"- **Depth**: {selected_brand['multi_turn_convs']} multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is {selected_brand['avg_conv_length']} (Conversation length does not guarantee successful resolution).\n\n")
         
         f.write("### Rejection Reasons for Other Candidates\n")
         f.write("- **AppleSupport**: Rejected despite high pair ratios (88%) because it has half the multi-turn conversations of Amazon, limiting depth for retrieval.\n")

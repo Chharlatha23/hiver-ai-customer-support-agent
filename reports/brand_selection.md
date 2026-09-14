@@ -37,10 +37,10 @@ It consists of an inbound customer message immediately followed by an outbound s
 - The project treats `AmazonHelp` as the operational brand label for subsequent phases.
 
 ### Justification
-AmazonHelp is preferred based on a balanced evaluation:
+Usable-pair volume is the primary ranking criterion, followed by qualitative comparison:
 - **Volume and Coverage**: Highest number of usable pairs (153029) and a strong pair ratio (81.82%). While the ranking is largely volume-dominated, the scale ensures sufficient examples for downstream tasks.
 - **Diversity**: Largest pool of unique customers (73425) and unique conversations (82556), providing excellent diversity for intent discovery.
-- **Depth**: 51,260 multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is 4.53 (Conversation length does not guarantee successful resolution).
+- **Depth**: 51260 multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is 4.53 (Conversation length does not guarantee successful resolution).
 
 ### Rejection Reasons for Other Candidates
 - **AppleSupport**: Rejected despite high pair ratios (88%) because it has half the multi-turn conversations of Amazon, limiting depth for retrieval.

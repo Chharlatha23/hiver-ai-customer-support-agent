@@ -12,7 +12,7 @@
 - **Orphan/Incomplete Tweets**: 3862
 
 ## Conversation Reconstruction Approach
-Root tweets were identified by tracing back the `in_response_to_tweet_id` until a tweet with no parent or a parent not in the dataset was found. The ID of this root tweet serves as the `conversation_id`. This approach handles linear and branching threads but relies on the presence of contiguous reply chains.
+Root tweets were identified by tracing back the `in_response_to_tweet_id` until a tweet with no parent or a parent not in the dataset was found. The ID of this root tweet serves as the `conversation_id`. This groups messages by root and does not explicitly model branch structure.
 
 ## Limitations
 - Missing tweets in the dataset create orphans and break conversations into multiple smaller threads.
