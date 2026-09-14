@@ -1,0 +1,11 @@
+intent,message_count,percentage,cumulative_count,total_customer_messages
+Other/Unclear,122239,60.04,122239,203598
+Delivery & Shipping Delays,29480,14.48,151719,203598
+Amazon Prime & Subscriptions,15031,7.38,166750,203598
+"Returns, Refunds & Cancellations",12213,6.0,178963,203598
+Account & Security,7647,3.76,186610,203598
+App & Website Technical Issues,5043,2.48,191653,203598
+Customer Service Complaint,4582,2.25,196235,203598
+Missing or Lost Package,3293,1.62,199528,203598
+Item Condition (Damaged/Defective),2137,1.05,201665,203598
+Wrong Item Received,1933,0.95,203598,203598
