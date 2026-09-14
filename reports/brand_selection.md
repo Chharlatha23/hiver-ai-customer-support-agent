@@ -1,23 +1,25 @@
 # Brand Selection Report
 
 ## Selection Criteria
-Candidates were ranked based on a balanced assessment of:
-1. **Usable Pairs**: The absolute number of customer-question/support-answer pairs (inbound followed by brand outbound).
-2. **Unique Conversations**: To ensure a wide variety of contexts.
-3. **Multi-turn Conversations**: To support robust conversational context.
-4. **Unique Customers**: A proxy for issue diversity and customer distribution.
+Candidates are primarily ranked by usable-pair count and then compared using:
+- Conversation depth.
+- Unique customers.
+- Unique conversations.
+- Pair ratio.
+- Suitability for downstream tasks.
 
 ## Candidate Comparison Table
-| brand        |   total_messages |   inbound_customer |   outbound_support |   unique_customers |   unique_conversations |   multi_turn_convs |   avg_conv_length |   usable_pairs |   pair_ratio_pct |
-|:-------------|-----------------:|-------------------:|-------------------:|-------------------:|-----------------------:|-------------------:|------------------:|---------------:|-----------------:|
-| AmazonHelp   |           374042 |             203598 |             169840 |              73425 |                  82556 |              51260 |              4.53 |         153029 |            81.82 |
-| AppleSupport |           238907 |             131764 |             106860 |              79517 |                  80717 |              28144 |              2.96 |         105487 |            88.31 |
-| Uber_Support |           128550 |              72154 |              56270 |              39868 |                  41923 |              15088 |              3.07 |          55190 |            85.87 |
-| SpotifyCares |            91889 |              48543 |              43265 |              28302 |                  28280 |              10500 |              3.25 |          41383 |            90.07 |
-| AmericanAir  |            87584 |              50054 |              36764 |              23261 |                  26386 |              11577 |              3.32 |          36418 |            83.16 |
+| brand        |   total_messages |   inbound_customer |   outbound_support |   unique_customers |   unique_conversations |   multi_turn_convs |   both_inbound_outbound_convs |   no_support_response_convs |   avg_conv_length |   median_conv_length |   usable_pairs |   pair_ratio_pct |
+|:-------------|-----------------:|-------------------:|-------------------:|-------------------:|-----------------------:|-------------------:|------------------------------:|----------------------------:|------------------:|---------------------:|---------------:|-----------------:|
+| AmazonHelp   |           374042 |             203598 |             169840 |              73425 |                  82556 |              51260 |                         82556 |                           0 |              4.53 |                    3 |         153029 |            81.82 |
+| AppleSupport |           238907 |             131764 |             106860 |              79517 |                  80717 |              28144 |                         80717 |                           0 |              2.96 |                    2 |         105487 |            88.31 |
+| Uber_Support |           128550 |              72154 |              56270 |              39868 |                  41923 |              15088 |                         41923 |                           0 |              3.07 |                    2 |          55190 |            85.87 |
+| SpotifyCares |            91889 |              48543 |              43265 |              28302 |                  28280 |              10500 |                         28277 |                           0 |              3.25 |                    2 |          41383 |            90.07 |
+| AmericanAir  |            87584 |              50054 |              36764 |              23261 |                  26386 |              11577 |                         26386 |                           0 |              3.32 |                    2 |          36418 |            83.16 |
 
 ### Usable Pairs Definition and Limitations
-`usable_pairs` is a conservative proxy consisting of an inbound customer message immediately followed by an outbound support message within the same reconstructed conversation. It does not guarantee that the outbound message is the direct response to that exact customer tweet.
+Usable pairs are chronological adjacent-message proxies, not exact response-linked pairs.
+It consists of an inbound customer message immediately followed by an outbound support message within the same reconstructed conversation.
 
 **Limitations of this approach**:
 - Consecutive customer messages can cause the earlier message to be excluded.
@@ -36,9 +38,9 @@ Candidates were ranked based on a balanced assessment of:
 
 ### Justification
 AmazonHelp is preferred based on a balanced evaluation:
-- **Volume and Coverage**: Highest number of usable pairs (153029) and a strong pair ratio (81.82%). While the ranking is volume-dominated, the sheer scale ensures sufficient examples for all downstream tasks.
+- **Volume and Coverage**: Highest number of usable pairs (153029) and a strong pair ratio (81.82%). While the ranking is largely volume-dominated, the scale ensures sufficient examples for downstream tasks.
 - **Diversity**: Largest pool of unique customers (73425) and unique conversations (82556), providing excellent diversity for intent discovery.
-- **Depth**: 51,260 multi-turn conversations and an average conversation length of 4.53 implies deep, meaningful interactions rather than isolated automation, which is critical for historical-response retrieval.
+- **Depth**: 51,260 multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is 4.53 (Conversation length does not guarantee successful resolution).
 
 ### Rejection Reasons for Other Candidates
 - **AppleSupport**: Rejected despite high pair ratios (88%) because it has half the multi-turn conversations of Amazon, limiting depth for retrieval.

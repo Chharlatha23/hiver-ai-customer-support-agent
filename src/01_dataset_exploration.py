@@ -2,8 +2,6 @@ import argparse
 import pandas as pd
 import numpy as np
 import os
-from collections import defaultdict
-import re
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Explore twcs dataset and select a brand.')
@@ -24,39 +22,39 @@ def reconstruct_conversations(df):
     
     # Create maps for fast lookup
     tweet_to_in_response = dict(zip(df['tweet_id'], df['in_response_to_tweet_id'].fillna('').astype(str)))
-    
-    # We define a thread by finding the root tweet.
-    # A root tweet is one that has no in_response_to_tweet_id OR its in_response_to_tweet_id is not in our dataset.
-    
-    # Map each tweet to its root
     tweet_to_root = {}
     
-    # Function to trace back to root
-    def get_root(tid, visited=None):
-        if visited is None:
-            visited = set()
-        if tid in visited:
-            return tid # Loop detected (rare, but handle it)
-        visited.add(tid)
-        
-        parent = tweet_to_in_response.get(tid, '')
-        if not parent or parent == 'nan' or parent not in tweet_to_in_response:
-            return tid
-        
-        # Check memoized
-        if tid in tweet_to_root:
-            return tweet_to_root[tid]
+    def get_root_iterative(start_tid):
+        if start_tid in tweet_to_root:
+            return tweet_to_root[start_tid]
             
-        root = get_root(parent, visited)
-        tweet_to_root[tid] = root
+        current_tid = start_tid
+        visited = set()
+        path = []
+        
+        while True:
+            if current_tid in tweet_to_root:
+                root = tweet_to_root[current_tid]
+                break
+            if current_tid in visited:
+                root = current_tid # Loop
+                break
+                
+            visited.add(current_tid)
+            path.append(current_tid)
+            
+            parent = tweet_to_in_response.get(current_tid, '')
+            if not parent or parent == 'nan' or parent not in tweet_to_in_response:
+                root = current_tid
+                break
+            current_tid = parent
+            
+        for node in path:
+            tweet_to_root[node] = root
+            
         return root
 
-    # Calculate root for all tweets
-    roots = []
-    for tid in df['tweet_id']:
-        roots.append(get_root(tid))
-        
-    df['conversation_id'] = roots
+    df['conversation_id'] = [get_root_iterative(tid) for tid in df['tweet_id']]
     return df
 
 def explore_dataset(df, output_dir):
@@ -80,8 +78,15 @@ def explore_dataset(df, output_dir):
     # Root tweets are those where tweet_id == conversation_id
     root_tweets_count = (df['tweet_id'] == df['conversation_id']).sum()
     
-    # Orphan/incomplete: tweets that respond to something not in dataset
-    orphan_count = df['in_response_to_tweet_id'].notna().sum() - df['in_response_to_tweet_id'].isin(df['tweet_id']).sum()
+    # Orphan/incomplete counting fix
+    parent_id = df["in_response_to_tweet_id"].astype("string")
+    orphan_mask = (
+        parent_id.notna()
+        & parent_id.ne("")
+        & parent_id.ne("nan")
+        & ~parent_id.isin(df["tweet_id"].astype("string"))
+    )
+    orphan_count = int(orphan_mask.sum())
     
     # Write dataset_exploration.md
     os.makedirs(output_dir, exist_ok=True)
@@ -120,9 +125,6 @@ def evaluate_candidates(df, output_dir):
     candidate_metrics = []
     
     for brand in top_brands:
-        brand_df = df[(df['author_id'] == brand) | (df['in_response_to_tweet_id'].isin(df[df['author_id'] == brand]['tweet_id'])) | (df['tweet_id'].isin(df[df['author_id'] == brand]['in_response_to_tweet_id']))]
-        
-        # Actually a better way: get all conversations involving the brand
         brand_convs = df[df['author_id'] == brand]['conversation_id'].unique()
         conv_df = df[df['conversation_id'].isin(brand_convs)]
         
@@ -133,12 +135,20 @@ def evaluate_candidates(df, output_dir):
         unique_customers = conv_df[conv_df['inbound']]['author_id'].nunique()
         unique_conversations = len(brand_convs)
         
-        # Multi-turn conversations (more than 2 messages)
         conv_lengths = conv_df.groupby('conversation_id').size()
         multi_turn_count = (conv_lengths > 2).sum()
         avg_conv_length = conv_lengths.mean()
+        median_conv_length = conv_lengths.median()
         
-        # Optimized Usable pairs: Inbound message immediately followed by outbound message by brand in the same conversation
+        # Conversations with both inbound and outbound messages
+        conv_has_inbound = set(conv_df[conv_df['inbound']]['conversation_id'].unique())
+        conv_has_outbound = set(conv_df[~conv_df['inbound']]['conversation_id'].unique())
+        both_in_out = len(conv_has_inbound.intersection(conv_has_outbound))
+        
+        # Conversations with no support response
+        no_support = len(set(brand_convs) - conv_has_outbound)
+        
+        # Optimized Usable pairs
         conv_df = conv_df.sort_values(['conversation_id', 'created_at_dt'])
         is_brand = conv_df['author_id'] == brand
         prev_is_not_brand = (conv_df['author_id'].shift(1) != brand) & (conv_df['conversation_id'] == conv_df['conversation_id'].shift(1))
@@ -157,13 +167,15 @@ def evaluate_candidates(df, output_dir):
             'unique_customers': unique_customers,
             'unique_conversations': unique_conversations,
             'multi_turn_convs': multi_turn_count,
+            'both_inbound_outbound_convs': both_in_out,
+            'no_support_response_convs': no_support,
             'avg_conv_length': round(avg_conv_length, 2),
+            'median_conv_length': median_conv_length,
             'usable_pairs': usable_pairs,
             'pair_ratio_pct': round(pair_ratio * 100, 2)
         })
         
     metrics_df = pd.DataFrame(candidate_metrics)
-    # Sort by usable_pairs as a primary balanced metric
     metrics_df = metrics_df.sort_values('usable_pairs', ascending=False)
     metrics_df.to_csv(os.path.join(output_dir, 'brand_candidates.csv'), index=False)
     
@@ -179,18 +191,20 @@ def write_selection_report(metrics_df, output_dir):
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write("# Brand Selection Report\n\n")
         f.write("## Selection Criteria\n")
-        f.write("Candidates were ranked based on a balanced assessment of:\n")
-        f.write("1. **Usable Pairs**: The absolute number of customer-question/support-answer pairs (inbound followed by brand outbound).\n")
-        f.write("2. **Unique Conversations**: To ensure a wide variety of contexts.\n")
-        f.write("3. **Multi-turn Conversations**: To support robust conversational context.\n")
-        f.write("4. **Unique Customers**: A proxy for issue diversity and customer distribution.\n\n")
+        f.write("Candidates are primarily ranked by usable-pair count and then compared using:\n")
+        f.write("- Conversation depth.\n")
+        f.write("- Unique customers.\n")
+        f.write("- Unique conversations.\n")
+        f.write("- Pair ratio.\n")
+        f.write("- Suitability for downstream tasks.\n\n")
         
         f.write("## Candidate Comparison Table\n")
         f.write(top_5.to_markdown(index=False))
         f.write("\n\n")
         
         f.write("### Usable Pairs Definition and Limitations\n")
-        f.write("`usable_pairs` is a conservative proxy consisting of an inbound customer message immediately followed by an outbound support message within the same reconstructed conversation. It does not guarantee that the outbound message is the direct response to that exact customer tweet.\n\n")
+        f.write("Usable pairs are chronological adjacent-message proxies, not exact response-linked pairs.\n")
+        f.write("It consists of an inbound customer message immediately followed by an outbound support message within the same reconstructed conversation.\n\n")
         f.write("**Limitations of this approach**:\n")
         f.write("- Consecutive customer messages can cause the earlier message to be excluded.\n")
         f.write("- Multiple support replies can cause some replies to be excluded.\n")
@@ -208,9 +222,9 @@ def write_selection_report(metrics_df, output_dir):
 
         f.write("### Justification\n")
         f.write("AmazonHelp is preferred based on a balanced evaluation:\n")
-        f.write(f"- **Volume and Coverage**: Highest number of usable pairs ({selected_brand['usable_pairs']}) and a strong pair ratio ({selected_brand['pair_ratio_pct']}%). While the ranking is volume-dominated, the sheer scale ensures sufficient examples for all downstream tasks.\n")
+        f.write(f"- **Volume and Coverage**: Highest number of usable pairs ({selected_brand['usable_pairs']}) and a strong pair ratio ({selected_brand['pair_ratio_pct']}%). While the ranking is largely volume-dominated, the scale ensures sufficient examples for downstream tasks.\n")
         f.write(f"- **Diversity**: Largest pool of unique customers ({selected_brand['unique_customers']}) and unique conversations ({selected_brand['unique_conversations']}), providing excellent diversity for intent discovery.\n")
-        f.write(f"- **Depth**: 51,260 multi-turn conversations and an average conversation length of {selected_brand['avg_conv_length']} implies deep, meaningful interactions rather than isolated automation, which is critical for historical-response retrieval.\n\n")
+        f.write(f"- **Depth**: 51,260 multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is {selected_brand['avg_conv_length']} (Conversation length does not guarantee successful resolution).\n\n")
         
         f.write("### Rejection Reasons for Other Candidates\n")
         f.write("- **AppleSupport**: Rejected despite high pair ratios (88%) because it has half the multi-turn conversations of Amazon, limiting depth for retrieval.\n")
