@@ -192,7 +192,10 @@ def write_selection_report(metrics_df, output_dir):
         f.write("- Suitability for downstream tasks.\n\n")
         
         f.write("## Candidate Comparison Table\n")
-        f.write(top_5.to_markdown(index=False))
+        table_md = top_5.to_markdown(index=False)
+        # Fix tabulate trailing whitespaces
+        table_md = '\n'.join([line.rstrip() for line in table_md.split('\n')])
+        f.write(table_md)
         f.write("\n\n")
         
         f.write("### Usable Pairs Definition and Limitations\n")

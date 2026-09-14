@@ -159,8 +159,8 @@ def main():
                 'tweet_id': row['tweet_id'],
                 'conversation_id': row['conversation_id'],
                 'author_id': row['author_id'],
-                'original_customer_message': row['text'],
-                'normalized_message': row['normalized_text']
+                'original_customer_message': str(row['text']).strip(),
+                'normalized_message': str(row['normalized_text']).strip()
             })
             
     examples_df = pd.DataFrame(examples)
@@ -197,7 +197,7 @@ def main():
             if not ex_subset.empty:
                 for _, ex in ex_subset.iterrows():
                     # Replace newlines in text to prevent breaking markdown lists
-                    clean_text = ex['original_customer_message'].replace('\n', ' ')
+                    clean_text = str(ex['original_customer_message']).replace('\n', ' ').strip()
                     f.write(f"  - `{clean_text}` (Conv: {ex['conversation_id']})\n")
             else:
                 f.write("  - *Not enough examples.*\n")
@@ -217,7 +217,7 @@ def main():
         ex_subset = examples_df[examples_df['intent'] == 'Other/Unclear']
         if not ex_subset.empty:
             for _, ex in ex_subset.iterrows():
-                clean_text = ex['original_customer_message'].replace('\n', ' ')
+                clean_text = str(ex['original_customer_message']).replace('\n', ' ').strip()
                 f.write(f"  - `{clean_text}` (Conv: {ex['conversation_id']})\n")
         else:
             f.write("  - *Not enough examples.*\n")
