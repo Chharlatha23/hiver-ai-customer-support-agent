@@ -54,17 +54,17 @@ INTENT_RULES = [
     },
     {
         "name": "Item Condition (Damaged/Defective)",
-        "regex": r'\b(damag(e|ed)|broken|defect(ive)?|destroy(ed)?|scratch(ed)?|shatter(ed)?|not working)\b',
+        "regex": r'\b(damag(e|ed)|broken|defect(ive)?|destroy(ed)?|scratch(ed)?|shatter(ed)?)\b',
         "definition": "Customer received an item but it is damaged, broken, or defective.",
         "inclusion": "Mentions of physical damage or items not functioning.",
-        "exclusion": "Wrong items that are in good condition."
+        "exclusion": "Wrong items that are in good condition. Generic 'not working' is excluded to avoid app/tracking confusion."
     },
     {
         "name": "Wrong Item Received",
-        "regex": r'\b(wrong|incorrect|not what i ordered|different item)\b',
+        "regex": r'\b(wrong (item|order|product|book|dvd|cd)|incorrect (item|order|product)|not what i ordered|different item|sent the wrong)\b',
         "definition": "Customer received a delivery, but it contains the wrong item.",
-        "inclusion": "Mentions of wrong, incorrect, or different items.",
-        "exclusion": "Missing items from an otherwise correct order."
+        "inclusion": "Mentions of wrong, incorrect, or different items specifically.",
+        "exclusion": "Missing items from an otherwise correct order. Generic 'incorrect' (e.g. incorrect address) is excluded."
     },
     {
         "name": "Delivery & Shipping Delays",
@@ -75,17 +75,17 @@ INTENT_RULES = [
     },
     {
         "name": "App & Website Technical Issues",
-        "regex": r'\b(app|website|site|glitch|error|load(ing)?|crash(ed)?|bug|won\'t open)\b',
+        "regex": r'\b(app (crash(ed)?|glitch(es)?|error|bug|won\'t open)|website (crash(ed)?|glitch(es)?|error|down|bug)|(site|page) (is )?down|won\'t load|loading error)\b',
         "definition": "Technical glitches experienced on the Amazon app or website.",
         "inclusion": "Mentions of app crashes, website glitches, or loading errors.",
-        "exclusion": "Account login issues (see Account & Security)."
+        "exclusion": "Generic mentions of using the app/website without reporting an error."
     },
     {
         "name": "Customer Service Complaint",
-        "regex": r'\b(customer service|hold|agent|representative|rep\b|(worst|terrible|horrible|unhelpful) (customer )?service)\b',
+        "regex": r'\b((bad|terrible|horrible|worst|useless|unhelpful) (customer )?service|rude (agent|rep|representative)|on hold for|hung up on)\b',
         "definition": "Feedback or complaints regarding a previous customer service interaction.",
         "inclusion": "Mentions of unhelpful reps, long hold times, or terrible service.",
-        "exclusion": "General complaints about shipping without mentioning support staff."
+        "exclusion": "Positive feedback or neutral mentions of customer service."
     }
 ]
 # Fallback is "Other/Unclear"
