@@ -33,10 +33,10 @@ INTENT_RULES = [
     },
     {
         "name": "Amazon Prime & Subscriptions",
-        "regex": r'\b(prime|subscript(ion)?|member(ship)?|video|music)\b',
+        "regex": r'\b(prime|subscript(ion)?|member(ship)?|(prime|amazon) video|amazon music)\b',
         "definition": "Inquiries or issues related to Amazon Prime services and digital subscriptions.",
         "inclusion": "Mentions of Prime, membership fees, Prime Video, or Music.",
-        "exclusion": "Standard physical deliveries unless explicitly referencing Prime delays."
+        "exclusion": "Standard physical deliveries unless explicitly referencing Prime delays. Excludes generic mentions of 'video' (e.g., 'I took a video of the damage')."
     },
     {
         "name": "Returns, Refunds & Cancellations",
@@ -47,9 +47,9 @@ INTENT_RULES = [
     },
     {
         "name": "Missing or Lost Package",
-        "regex": r'\b(missing|stolen|didn\'t receive|never arriv(ed|ing)|not receiv(ed|ing)|lost)\b',
+        "regex": r'\b(missing|stolen|didn\'t receive|never arriv(ed|ing)|not receiv(ed|ing)|lost|where is (my|the) (order|package|parcel|item|delivery))\b',
         "definition": "Customer reports that a package was marked delivered but isn't there, or is lost in transit.",
-        "inclusion": "Mentions of stolen, missing, or unreceived packages.",
+        "inclusion": "Mentions of stolen, missing, or unreceived packages, or explicitly asking 'where is my order/parcel'.",
         "exclusion": "Packages that are just delayed (see Delivery/Shipping)."
     },
     {
@@ -68,7 +68,7 @@ INTENT_RULES = [
     },
     {
         "name": "Delivery & Shipping Delays",
-        "regex": r'\b(deliver(y|ed|ing)?|ship(ping|ped|ment)?|track(ing)?|arriv(e|ing|ed)?|delay(ed)?|where is my (order|package))\b',
+        "regex": r'\b(deliver(y|ed|ing)?|ship(ping|ped|ment)?|track(ing)?|arriv(e|ing|ed)?|delay(ed)?)\b',
         "definition": "General inquiries about shipping status, delivery dates, tracking, or delays.",
         "inclusion": "Mentions of tracking, delivery status, or delayed shipping.",
         "exclusion": "Packages confirmed stolen or lost."
@@ -82,7 +82,7 @@ INTENT_RULES = [
     },
     {
         "name": "Customer Service Complaint",
-        "regex": r'\b(customer service|hold|agent|representative|rep\b|worst|terrible|horrible|unhelpful)\b',
+        "regex": r'\b(customer service|hold|agent|representative|rep\b|(worst|terrible|horrible|unhelpful) (customer )?service)\b',
         "definition": "Feedback or complaints regarding a previous customer service interaction.",
         "inclusion": "Mentions of unhelpful reps, long hold times, or terrible service.",
         "exclusion": "General complaints about shipping without mentioning support staff."

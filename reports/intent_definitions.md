@@ -22,109 +22,109 @@ This document details the discovered customer-support intents based on keyword/h
 
 ## 2. Amazon Prime & Subscriptions
 - **Definition**: Inquiries or issues related to Amazon Prime services and digital subscriptions.
-- **Inclusion Criteria**: Mentions of Prime, membership fees, Prime Video, or Music. (Regex: `\b(prime|subscript(ion)?|member(ship)?|video|music)\b`)
-- **Exclusion Criteria**: Standard physical deliveries unless explicitly referencing Prime delays.
-- **Frequency**: 15031 messages (7.38%)
+- **Inclusion Criteria**: Mentions of Prime, membership fees, Prime Video, or Music. (Regex: `\b(prime|subscript(ion)?|member(ship)?|(prime|amazon) video|amazon music)\b`)
+- **Exclusion Criteria**: Standard physical deliveries unless explicitly referencing Prime delays. Excludes generic mentions of 'video' (e.g., 'I took a video of the damage').
+- **Frequency**: 14314 messages (7.03%)
 - **Representative Examples**:
-  - `I don't know why @116316  Prime in Belgium isn't being carried out by @37596. @132988 isn't as fast (and not as good as Bpost).` (Conv: 2403888)
-  - `.@120533 je n’en peux plus de ne pas recevoir mes colis en temps et en heure en étant Prime… Où est passée votre qualité de service? https://t.co/AHke4MPHqw` (Conv: 1093295)
-  - `@AmazonHelp It has just been dispatched and is going to arrive tomorrow now. When you have guaranteed day of release and we have prime time delivery ?` (Conv: 1494253)
-  - `Man...I love how the very first purchase I made AFTER my amazon prime renewed gets delayed somehow.  Meanwhile people ordered the same thing MONTHS after I did and it's on time for them.  Great business strategy.` (Conv: 2599700)
-  - `@AmazonHelp Managing permissions on Advantage. I've sent in a video link to show the problem via my case log. Hopefully that helps.` (Conv: 2499199)
+  - `@116618 - I got charged for a tv episode that is included with prime. How can I dispute this?` (Conv: 1246885)
+  - `@AmazonHelp I feel like Amazon is not trying to keep non-prime customers. They want to force you to sign for Amazon Prime or wait a month for items.` (Conv: 1919765)
+  - `@AmazonHelp @302018 Please add support for prime video for India on @127972. It can’t be that hard surely! Maybe someone needs to flip a switch somewhere :)` (Conv: 761836)
+  - `@AmazonHelp If the Amazon website let me sign up for Prime with a card that has no money on it, will the membership be cancelled if 1/2` (Conv: 1095892)
+  - `@115821 With the huge failure today driver around the corner and doesn't deliver my package now it's delayed, that's not PRIME. #FAIL` (Conv: 2807308)
 
 ## 3. Returns, Refunds & Cancellations
 - **Definition**: Requests or issues regarding returning items, receiving refunds, billing issues, or cancelling orders.
 - **Inclusion Criteria**: Mentions of returning, refunding, overcharging, or order cancellation. (Regex: `\b(return(ing|ed)?|refund(ed)?|money back|charge(d)? twice|cancel(led|ing|lation)?)\b`)
 - **Exclusion Criteria**: General missing item complaints if refund isn't mentioned.
-- **Frequency**: 12213 messages (6.0%)
+- **Frequency**: 12233 messages (6.01%)
 - **Representative Examples**:
-  - `@AmazonHelp my constructive feedback on leap refund was not posted in amazon,   don't know why amazon try to protect their sellers??` (Conv: 851605)
-  - `@AmazonHelp I was asked if I wanted a refund or replacement, I chose replacement but received an email saying you can’t replace.` (Conv: 529952)
-  - `@AmazonHelp So, can you confirm, will I be able to Active the Trial at a later date or not if this is Cancelled currently?  Thanks!` (Conv: 145769)
-  - `@AmazonHelp How do I return a damaged item from 3rd party seller?` (Conv: 2277875)
-  - `@AmazonHelp Re-ordering the same monitor didn't go through (for some reason.) The customer rep that helped me offered a full refund so I can go ahead and reorder it. That's fine and dandy, but now this monitor's status is 1 in-stock and for 268.99. Which defeats the purpose of Black Friday.` (Conv: 560583)
+  - `@AmazonHelp CS rep then told me I have to pay for a second one again before u can despatch it. Now awaiting 2 refunds and hope system dont cancel again` (Conv: 740418)
+  - `@AmazonHelp Return item(408-3942370-6997921) was picked up on 05/10 by BlueDart .Howver,its not reflecting in my order history and also refund pending.` (Conv: 183011)
+  - `@AmazonHelp I will be heartbroken if Xenoblade Chronicles 2 does not arrive tomorrow. There are other items lost, overdue, and cancelled in my history. My customer email is iain at [twitter username].com.` (Conv: 65754)
+  - `@AmazonHelp Anyways i need to be refunded by tomorrow evening or Tuesday i will go to consumer court with my lawyer and i have enough profs to prove` (Conv: 1608379)
+  - `@AmazonHelp No options was just given a refund and told its out of stock....hence why we had preordered!!` (Conv: 2780525)
 
 ## 4. Missing or Lost Package
 - **Definition**: Customer reports that a package was marked delivered but isn't there, or is lost in transit.
-- **Inclusion Criteria**: Mentions of stolen, missing, or unreceived packages. (Regex: `\b(missing|stolen|didn\'t receive|never arriv(ed|ing)|not receiv(ed|ing)|lost)\b`)
+- **Inclusion Criteria**: Mentions of stolen, missing, or unreceived packages, or explicitly asking 'where is my order/parcel'. (Regex: `\b(missing|stolen|didn\'t receive|never arriv(ed|ing)|not receiv(ed|ing)|lost|where is (my|the) (order|package|parcel|item|delivery))\b`)
 - **Exclusion Criteria**: Packages that are just delayed (see Delivery/Shipping).
-- **Frequency**: 3293 messages (1.62%)
+- **Frequency**: 3490 messages (1.71%)
 - **Representative Examples**:
-  - `@AmazonHelp help! My partner ordered from you and still have not received - should have arrived on Wednesday` (Conv: 356692)
-  - `@AmazonHelp Ordered 14-Oct, AmazonCC asked me to wait till 17-Oct then 24-Oct and now 26-Oct to work on escalation for not receiving product https://t.co/nfPd3U003j` (Conv: 1172163)
-  - `@AmazonHelp Not received the email nothing @115850` (Conv: 1381161)
-  - `@115821 You charged me twice. Your overseas rep lied BIG time. Now I have to dispute through Amazon Store card. My time is being stolen. Will be 4-5 calls to resolve. My big Christmas shopping not done and won't be through Amazon now or ever. Double charging everybody? Thieves!` (Conv: 481711)
-  - `@AmazonHelp An "Add-On" item is missing from the package I picked up yesterday. The order was packed by Amazon. I can find no appropriate support details for contact to report this and get a replacement. Can you give me a link please?` (Conv: 481485)
+  - `@AmazonHelp ... and I see I've been charged for everything, despite not receiving it. Crossing my fingers that I'll get the delivery only one day late!` (Conv: 2985480)
+  - `It would be SUPER helpful if @115821 drivers stopped leaving my packages in strange places in the rain. Four times now they've been lost or ruined. Hasn't happened until recently. What's going on?! @AmazonHelp` (Conv: 2376132)
+  - `lost the invoice of Moto G4+ purchased from amazon with imei number __credit_card__ @8850 @23773 @951 @115821 @115850` (Conv: 1445391)
+  - `@AmazonHelp Where is my order details in that its just your courier service details not even the name of product is visible let alone order number` (Conv: 841262)
+  - `How about a ‘where IS my package?’ button @AmazonHelp? £40 lost. 😡 https://t.co/SS9iH4oZFI` (Conv: 24559)
 
 ## 5. Item Condition (Damaged/Defective)
 - **Definition**: Customer received an item but it is damaged, broken, or defective.
 - **Inclusion Criteria**: Mentions of physical damage or items not functioning. (Regex: `\b(damag(e|ed)|broken|defect(ive)?|destroy(ed)?|scratch(ed)?|shatter(ed)?|not working)\b`)
 - **Exclusion Criteria**: Wrong items that are in good condition.
-- **Frequency**: 2137 messages (1.05%)
+- **Frequency**: 2151 messages (1.06%)
 - **Representative Examples**:
-  - `@AmazonHelp Yes I have reported this to your support staff and they have directed me to send the pictures of the defective product via email` (Conv: 1141932)
-  - `I can't place my order bcz issue is "amazon pay balance" after selection this mode, it is not working for further procedures .  I regularly tried to contact customer care executive but no response found 😡 plz help urgently...............................` (Conv: 2542905)
-  - `Thanks to my @AmazonHelp delivery driver who called to ask if I was home, could barely speak English,asked to put the parcel in my outside letterbox,i advised if too big to put it in the porch.He couldn't understand&amp;left it  hanging out the letterbox!Parcel&amp;goods water damaged👎` (Conv: 2747237)
-  - `@AmazonHelp 1. To get the TV installed was a nightmare. 2. Have been having issues with the TV not working - goes blank screen  frequently` (Conv: 227382)
-  - `@115821 is your new biz plan converting new items to damaged ones so you can sell at discount/loss?` (Conv: 1828781)
+  - `Same day delivery not working then @115821` (Conv: 1297450)
+  - `@117634 Any idea why wi fi stopped working on Kindle today? Wife's Kindle is not working too.` (Conv: 1190195)
+  - `@115850 had ordered combo essential oil pack. One has broken seal,customer care number is getting disconnected automatically. Help here` (Conv: 2511193)
+  - `@AmazonHelp By Amazon - you? If you can't help am I wasting my time? Like I am being asked to waste time/effort etc. sending you broken china pieces.` (Conv: 1338721)
+  - `@AmazonHelp why do you not send books in protective packaging? I just received 3 books from you all scratched and with other damage -_-` (Conv: 1004387)
 
 ## 6. Wrong Item Received
 - **Definition**: Customer received a delivery, but it contains the wrong item.
 - **Inclusion Criteria**: Mentions of wrong, incorrect, or different items. (Regex: `\b(wrong|incorrect|not what i ordered|different item)\b`)
 - **Exclusion Criteria**: Missing items from an otherwise correct order.
-- **Frequency**: 1933 messages (0.95%)
+- **Frequency**: 1940 messages (0.95%)
 - **Representative Examples**:
-  - `@AmazonHelp Did the same on the last wrong order... Got  I support yet...` (Conv: 2193238)
-  - `@164818 @AmazonHelp last week @115830 sent me the wrong version of a game because they had increased the price after i'd bought it,. Good luck with this` (Conv: 206211)
-  - `@115821  all the promo prices were incorrect in my shopping cart,what's up w/that? U need to credit me the difference,this is BS. What kind of scam are you running?#blackfriday` (Conv: 152144)
-  - `@AmazonHelp Yes. But you've delivered there before including very recently. There's clearly something wrong with this order only or perhaps your courier` (Conv: 367403)
-  - `@AmazonHelp They sent me to the wrong one - found it myself - if anyone else asks, its to the left of the entrance to Debenhams, ground floor, opposite The Gate!` (Conv: 2883293)
+  - `@AmazonHelp Bugger, I did. Nothing conflicting in my post. U tell me what was wrong. @115821 stop hiring interns for SM and Digital` (Conv: 987369)
+  - `@115821 can't get their shit together - Possible delay in delivery due to arrival at incorrect carrier facility - on my order for 8 days.` (Conv: 359202)
+  - `Hey @115833 why does #Alexa get this wrong when #GoogleHome gets it right? I just asked for the temperature, not for the Iliad &amp; Odyssey https://t.co/EztkaJP6b4` (Conv: 871209)
+  - `@AmazonHelp Order 204-8057426-5071528 issue with product being incorrect. Who do I speak to?` (Conv: 2432807)
+  - `@AmazonHelp Yes it’s my details on the label and everything was ordered fulfilled by amazon. I’m thinking someone may have put the wrong label on the boxes like it was a mix up` (Conv: 2292092)
 
 ## 7. Delivery & Shipping Delays
 - **Definition**: General inquiries about shipping status, delivery dates, tracking, or delays.
-- **Inclusion Criteria**: Mentions of tracking, delivery status, or delayed shipping. (Regex: `\b(deliver(y|ed|ing)?|ship(ping|ped|ment)?|track(ing)?|arriv(e|ing|ed)?|delay(ed)?|where is my (order|package))\b`)
+- **Inclusion Criteria**: Mentions of tracking, delivery status, or delayed shipping. (Regex: `\b(deliver(y|ed|ing)?|ship(ping|ped|ment)?|track(ing)?|arriv(e|ing|ed)?|delay(ed)?)\b`)
 - **Exclusion Criteria**: Packages confirmed stolen or lost.
-- **Frequency**: 29480 messages (14.48%)
+- **Frequency**: 29360 messages (14.42%)
 - **Representative Examples**:
-  - `@AmazonHelp Was my first issue with shipping. Obviously it was an inconvenience and frustrating. Will continue to shop. #primememberfor3+years` (Conv: 584573)
-  - `@AmazonHelp It's always Amazon Logistics. Never reads the delivery instructions.` (Conv: 1693668)
-  - `Pathetic delivery experience by @115850. Confirmed delivery without the delivery. Thanks for brilliant work. #thankyou` (Conv: 1765373)
-  - `@AmazonHelp Hi can you DM me , I want a better idea of what time my delivery is` (Conv: 2104295)
-  - `Expecting my #sirui #monopod and #ballhead to arrive today , thanks to @115850 #AmazonPrime` (Conv: 346728)
+  - `@AmazonHelp ordered something same day delivery but it still hasn’t arrived. Is there a chance it could still come or will this be tomorrow?` (Conv: 2306226)
+  - `@AmazonHelp No I did not, only saw it from the "track package"` (Conv: 2971861)
+  - `Slow round of applause to @115830 who just delayed an advent calendar I ordered until the 6th December. 🤔` (Conv: 494116)
+  - `@AmazonHelp I can actually do a new order now and would get it shipped faster than my pre-order in march.  Or just go to a store and get it.` (Conv: 2570904)
+  - `@115851 can you make a software for creating product link for flat files.because relying on third party can delay us to update inventory. Happen with me today. #AmazonIndia  #ProudAmazonseller` (Conv: 2845566)
 
 ## 8. App & Website Technical Issues
 - **Definition**: Technical glitches experienced on the Amazon app or website.
 - **Inclusion Criteria**: Mentions of app crashes, website glitches, or loading errors. (Regex: `\b(app|website|site|glitch|error|load(ing)?|crash(ed)?|bug|won\'t open)\b`)
 - **Exclusion Criteria**: Account login issues (see Account & Security).
-- **Frequency**: 5043 messages (2.48%)
+- **Frequency**: 5150 messages (2.53%)
 - **Representative Examples**:
-  - `@AmazonHelp did the sonos play:1 promo end? I thought tomorrow was last day. Your site is not accepting the promo code. Please advise!` (Conv: 411881)
-  - `@AmazonHelp Where is that on the website?` (Conv: 423980)
-  - `@AmazonHelp Yeah. I’d still like to get my orders. I’m familiar with the customer service option in the app. There’s no excuse for these delays. https://t.co/WVtzxUoXx2` (Conv: 2570137)
-  - `@AmazonHelp não pararia na alfândega pelas taxas e tudo mais?Queria comprar pelo site da amazon brasileira e não correr o risco de taxarem 200% do valor` (Conv: 1339871)
-  - `@AmazonHelp hi, when will you list the Intel i7-8700k on the UK site? It’s supposed to release today.` (Conv: 235661)
+  - `If anyone has the site for the @115821 customer service portal where they actually read the chat/emails, that would helpful info. Thanks and Happy Thanksgiving.` (Conv: 115883)
+  - `@AmazonHelp Desde su centro de atencion al cliente ya han confirmado que no se ha producido ningún fraude.Una vez más su solucion es que tengo que pagar yo un error de ustedes.Muchas gracias por hacerme perder mi tiempo y mi dinero  #amazon #blackfriday #desastredeservicio` (Conv: 181233)
+  - `@AmazonHelp Seems to be working now, without having cleared the cache. The issue was in both the app and the site, so caching wasn’t the issue. Thanks.` (Conv: 644009)
+  - `@AmazonHelp no, the formatting is just gone. It's like i have low internet connection but every other site is working perfectly.` (Conv: 881095)
+  - `@AmazonHelp its better weather i am going with another online website/store. Amazon takes 20 days in this process to get ready a product for DispatchWOW` (Conv: 985102)
 
 ## 9. Customer Service Complaint
 - **Definition**: Feedback or complaints regarding a previous customer service interaction.
-- **Inclusion Criteria**: Mentions of unhelpful reps, long hold times, or terrible service. (Regex: `\b(customer service|hold|agent|representative|rep\b|worst|terrible|horrible|unhelpful)\b`)
+- **Inclusion Criteria**: Mentions of unhelpful reps, long hold times, or terrible service. (Regex: `\b(customer service|hold|agent|representative|rep\b|(worst|terrible|horrible|unhelpful) (customer )?service)\b`)
 - **Exclusion Criteria**: General complaints about shipping without mentioning support staff.
-- **Frequency**: 4582 messages (2.25%)
+- **Frequency**: 3734 messages (1.83%)
 - **Representative Examples**:
-  - `@AmazonHelp @115851 dear team you are https://t.co/csafCG5zeB guys world's best customer service company. I really appreciate ur work and honesty.tnx` (Conv: 644717)
-  - `been 10 days. customer service keeps askin me to wait for 24 hours more.Amazon India's service is a joke. I've been having problems with every single time I use the service! Just coz you've almst monopolized the market doesn mean you get to treat customers like trash @115821` (Conv: 80761)
-  - `@AmazonHelp @115850 worst service by you` (Conv: 311048)
-  - `@115830 your service for me recently has been shocking. I have emailed you about this issue but don't buy a TV people is a total ballache! Customer service team are not helpful and don't know what's going on. #crapservice #BlackFriday #amazon #unhappy` (Conv: 2898872)
-  - `@AmazonHelp Don't get any problems with @122232 or @115817 and there customer service is great too` (Conv: 229801)
+  - `Customer service at its best. @115830 @AmazonHelp. 10 yrs a customer and never a bad experience. Kudos to the team. #satisfiedcustomer` (Conv: 1265724)
+  - `Hey @AmazonHelp can I get some help with an order issue? I called customer service twice but they are having issues comprehending my problem` (Conv: 1245432)
+  - `@AmazonHelp Just spoke with rep. He said I'd 2 call tomo b/w 9 n 5 but I'm at work all that time. He said he'd pass msg on...` (Conv: 1286726)
+  - `@AmazonHelp and was asked if I wanted to give customer service a chance. I said yes and waited on hold to speak with someone. She was able to provide` (Conv: 357370)
+  - `@AmazonHelp  @115850 your customer service executives are worst. I haven't received my cashback in 4 mnths despite several complaints. https://t.co/zNb85n3mtt` (Conv: 918252)
 
 ## 10. Other/Unclear
 - **Definition**: Messages that do not explicitly match any of the prioritized intent heuristics.
 - **Inclusion Criteria**: Fails to match any predefined regex rules.
 - **Exclusion Criteria**: Matches any predefined rule.
-- **Frequency**: 122239 messages (60.04%)
+- **Frequency**: 123579 messages (60.7%)
 - **Representative Examples**:
-  - `@AmazonHelp No safe place set up as just a book and thought would fit in letterbox, but have checked bins just in case and nothing there` (Conv: 2470094)
-  - `@AmazonHelp すみません、運送業者のサイトで確認したところ商品自体は受け取り店(コンビニ)に到着しているようなのですが、受け取り番号が発行されていないようです この場合はどうしたら良いのでしょうか?` (Conv: 215171)
-  - `@AmazonHelp  https://t.co/I6uwqGCjGd` (Conv: 2725040)
-  - `@115850 Why I wasted my time to go to service center when the same will be applicable automatically.` (Conv: 2296683)
-  - `@AmazonHelp Thanks for checking the conversation, do help me by fulfilling the commitment done. #AwaitingResolution https://t.co/QsUNlq47l5` (Conv: 1055275)
+  - `@AmazonHelp Pas encore Ma femme va le faire dans la foulée` (Conv: 1632494)
+  - `@AmazonHelp Très bien merci je vais suivre cette procédure` (Conv: 529081)
+  - `@115850  tell me what detail do you need? https://t.co/FhtRrOsU76` (Conv: 1655017)
+  - `@AmazonHelp Thanks for the link. I submitted a couple order issues. Is there an easy way to do that online for orders that are late?` (Conv: 364025)
+  - `@AmazonHelp わざわざ、リプありがとうございます🍀` (Conv: 660343)
 
