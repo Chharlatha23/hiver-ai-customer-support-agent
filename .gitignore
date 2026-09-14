@@ -1,6 +1,7 @@
 data/raw/
 twcs/twcs.csv
 archive.zip
+sample.csv
 .env
 .venv/
 venv/

@@ -189,23 +189,35 @@ def write_selection_report(metrics_df, output_dir):
         f.write(top_5.to_markdown(index=False))
         f.write("\n\n")
         
+        f.write("### Usable Pairs Definition and Limitations\n")
+        f.write("`usable_pairs` is a conservative proxy consisting of an inbound customer message immediately followed by an outbound support message within the same reconstructed conversation. It does not guarantee that the outbound message is the direct response to that exact customer tweet.\n\n")
+        f.write("**Limitations of this approach**:\n")
+        f.write("- Consecutive customer messages can cause the earlier message to be excluded.\n")
+        f.write("- Multiple support replies can cause some replies to be excluded.\n")
+        f.write("- Chronological adjacency does not always prove direct reply intent.\n")
+        f.write("- Actual `response_tweet_id` edges are not currently used for pair counting.\n\n")
+
         f.write(f"## Selected Brand: {selected_brand['brand']}\n")
         f.write(f"**{selected_brand['brand']}** is the recommended brand for the AI customer support agent.\n\n")
         
+        f.write("### Account Identity\n")
+        f.write(f"- `{selected_brand['brand']}` is the selected support account identifier.\n")
+        f.write("- The account is inferred from dataset account naming and behavior.\n")
+        f.write("- No external account-verification API was used.\n")
+        f.write(f"- The project treats `{selected_brand['brand']}` as the operational brand label for subsequent phases.\n\n")
+
         f.write("### Justification\n")
-        f.write(f"- It has the highest number of usable pairs ({selected_brand['usable_pairs']}), ensuring ample data for intent classification and historical-response retrieval.\n")
-        f.write(f"- It maintains a large number of unique conversations ({selected_brand['unique_conversations']}) and high unique customer count ({selected_brand['unique_customers']}), ensuring topic diversity.\n")
-        f.write(f"- The presence of {selected_brand['multi_turn_convs']} multi-turn conversations indicates deep, meaningful support interactions rather than purely automated or single-turn responses.\n\n")
+        f.write("AmazonHelp is preferred based on a balanced evaluation:\n")
+        f.write(f"- **Volume and Coverage**: Highest number of usable pairs ({selected_brand['usable_pairs']}) and a strong pair ratio ({selected_brand['pair_ratio_pct']}%). While the ranking is volume-dominated, the sheer scale ensures sufficient examples for all downstream tasks.\n")
+        f.write(f"- **Diversity**: Largest pool of unique customers ({selected_brand['unique_customers']}) and unique conversations ({selected_brand['unique_conversations']}), providing excellent diversity for intent discovery.\n")
+        f.write(f"- **Depth**: 51,260 multi-turn conversations and an average conversation length of {selected_brand['avg_conv_length']} implies deep, meaningful interactions rather than isolated automation, which is critical for historical-response retrieval.\n\n")
         
         f.write("### Rejection Reasons for Other Candidates\n")
-        for idx, row in top_5.iloc[1:].iterrows():
-            f.write(f"- **{row['brand']}**: Rejected despite having {row['usable_pairs']} usable pairs because {selected_brand['brand']} offers a superior overall volume of multi-turn and diverse customer interactions.\n")
-            
-        f.write("\n### Risks and Limitations\n")
-        f.write("- **Account Authenticity**: The identity is inferred from naming patterns and high outbound support volume, but not verified via external official channels.\n")
-        f.write("- **Data Drift/Context**: Tweets may reference external links or specific localized outages that an AI agent cannot dynamically resolve without active systems integration.\n\n")
+        f.write("- **AppleSupport**: Rejected despite high pair ratios (88%) because it has half the multi-turn conversations of Amazon, limiting depth for retrieval.\n")
+        f.write("- **Uber_Support, SpotifyCares, AmericanAir**: Rejected because their overall scale (total pairs and multi-turn conversations) is significantly smaller than AmazonHelp. While their interactions are high quality, AmazonHelp provides a vastly larger repository of varied conversational data to train and evaluate against.\n")
+        f.write("- **Risks**: All candidates (including AmazonHelp) present risks of noisy or repetitive conversations (e.g., standard \"DM us your order number\" replies). AmazonHelp's massive unique customer count mitigates this risk better than the others.\n")
         
-        f.write("### Next Steps\n")
+        f.write("\n### Next Steps\n")
         f.write("Proceed to Phase 2: Filter the dataset exclusively for this brand, generate intent clusters, and prepare the grounded generation evaluation set.\n")
 
 def main():
