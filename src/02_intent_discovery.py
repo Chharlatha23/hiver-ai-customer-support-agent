@@ -25,39 +25,11 @@ def load_reconstruction_logic():
 # Classification Priority matches the order of this list.
 INTENT_RULES = [
     {
-        "name": "Account & Security",
-        "regex": r'\b(password|lock(ed)?|hack(ed)?|login|log in|account|unauthorized|fraud)\b',
-        "definition": "Issues regarding account access, security, or unauthorized activity.",
-        "inclusion": "Mentions of passwords, locked accounts, hacks, logins, or fraud.",
-        "exclusion": "Payment issues not explicitly tied to account hacks."
-    },
-    {
-        "name": "Amazon Prime & Subscriptions",
-        "regex": r'\b(prime|subscript(ion)?|member(ship)?|(prime|amazon) video|amazon music)\b',
-        "definition": "Inquiries or issues related to Amazon Prime services and digital subscriptions.",
-        "inclusion": "Mentions of Prime, membership fees, Prime Video, or Music.",
-        "exclusion": "Standard physical deliveries unless explicitly referencing Prime delays. Excludes generic mentions of 'video' (e.g., 'I took a video of the damage')."
-    },
-    {
-        "name": "Returns, Refunds & Cancellations",
-        "regex": r'\b(return(ing|ed)?|refund(ed)?|money back|charge(d)? twice|cancel(led|ing|lation)?)\b',
-        "definition": "Requests or issues regarding returning items, receiving refunds, billing issues, or cancelling orders.",
-        "inclusion": "Mentions of returning, refunding, overcharging, or order cancellation.",
-        "exclusion": "General missing item complaints if refund isn't mentioned."
-    },
-    {
         "name": "Missing or Lost Package",
         "regex": r'\b(missing|stolen|didn\'t receive|never arriv(ed|ing)|not receiv(ed|ing)|lost|where is (my|the) (order|package|parcel|item|delivery))\b',
         "definition": "Customer reports that a package was marked delivered but isn't there, or is lost in transit.",
         "inclusion": "Mentions of stolen, missing, or unreceived packages, or explicitly asking 'where is my order/parcel'.",
         "exclusion": "Packages that are just delayed (see Delivery/Shipping)."
-    },
-    {
-        "name": "Item Condition (Damaged/Defective)",
-        "regex": r'\b(damag(e|ed)|broken|defect(ive)?|destroy(ed)?|scratch(ed)?|shatter(ed)?)\b',
-        "definition": "Customer received an item but it is damaged, broken, or defective.",
-        "inclusion": "Mentions of physical damage or items not functioning.",
-        "exclusion": "Wrong items that are in good condition. Generic 'not working' is excluded to avoid app/tracking confusion."
     },
     {
         "name": "Wrong Item Received",
@@ -67,11 +39,67 @@ INTENT_RULES = [
         "exclusion": "Missing items from an otherwise correct order. Generic 'incorrect' (e.g. incorrect address) is excluded."
     },
     {
+        "name": "Damaged or Defective Item",
+        "regex": r'\b(damag(e|ed)|broken|defect(ive)?|destroy(ed)?|scratch(ed)?|shatter(ed)?)\b',
+        "definition": "Customer received an item but it is damaged, broken, or defective.",
+        "inclusion": "Mentions of physical damage or items not functioning.",
+        "exclusion": "Wrong items that are in good condition. Generic 'not working' is excluded to avoid app/tracking confusion."
+    },
+    {
+        "name": "Returns, Refunds & Cancellations",
+        "regex": r'\b(return(ing|ed)?|refund(ed)?|money back|charge(d)? twice|cancel(led|ing|lation)?)\b',
+        "definition": "Requests or issues regarding returning items, receiving refunds, billing issues, or cancelling orders.",
+        "inclusion": "Mentions of returning, refunding, overcharging, or order cancellation.",
+        "exclusion": "General missing item complaints if refund isn't mentioned."
+    },
+    {
+        "name": "Payment & Billing",
+        "regex": r'\b(charg(e|ed)|bill(ing|ed)?|payment|invoice|credit card|debit|bank account|deduct(ed)?|fee)\b',
+        "definition": "Issues regarding payment methods, unexpected charges, or billing.",
+        "inclusion": "Mentions of charges, payments, cards, banks, or fees.",
+        "exclusion": "Refunds (handled by Returns, Refunds & Cancellations)."
+    },
+    {
         "name": "Delivery & Shipping Delays",
         "regex": r'\b(deliver(y|ed|ing)?|ship(ping|ped|ment)?|track(ing)?|arriv(e|ing|ed)?|delay(ed)?)\b',
         "definition": "General inquiries about shipping status, delivery dates, tracking, or delays.",
         "inclusion": "Mentions of tracking, delivery status, or delayed shipping.",
         "exclusion": "Packages confirmed stolen or lost."
+    },
+    {
+        "name": "Orders & General Order Issues",
+        "regex": r'\b(order(ed)?|purchas(e|ed)?|buy(ing)?|bought)\b',
+        "definition": "General order inquiries not covered by missing, wrong, or damaged item rules.",
+        "inclusion": "Mentions of ordering, purchasing, or buying.",
+        "exclusion": "Specific order issues like missing/damaged items."
+    },
+    {
+        "name": "Account & Security",
+        "regex": r'\b(password|lock(ed)?|hack(ed)?|login|log in|account|unauthorized|fraud|scam)\b',
+        "definition": "Issues regarding account access, security, or unauthorized activity.",
+        "inclusion": "Mentions of passwords, locked accounts, hacks, logins, or fraud.",
+        "exclusion": "Payment issues not explicitly tied to account hacks."
+    },
+    {
+        "name": "Prime & Subscriptions",
+        "regex": r'\b(prime|subscript(ion)?|member(ship)?|renew(al)?)\b',
+        "definition": "Inquiries or issues related to Amazon Prime memberships.",
+        "inclusion": "Mentions of Prime, membership fees, or subscription renewals.",
+        "exclusion": "Digital content playback (handled by Digital Services)."
+    },
+    {
+        "name": "Digital Services & Media",
+        "regex": r'\b((prime|amazon) video|amazon music|kindle|audiobook|audible|ebook|movie|show|stream(ing)?)\b',
+        "definition": "Issues with Amazon's digital media services.",
+        "inclusion": "Mentions of Video, Music, Kindle, Audible, or streaming.",
+        "exclusion": "Physical media (DVDs/CDs) unless explicitly related to a digital copy."
+    },
+    {
+        "name": "Seller & Marketplace Issues",
+        "regex": r'\b(seller|third(-| )party|vendor|marketplace|storefront)\b',
+        "definition": "Issues specifically calling out third-party sellers on the marketplace.",
+        "inclusion": "Mentions of third-party sellers, vendors, or storefronts.",
+        "exclusion": "General order complaints where the seller isn't explicitly mentioned."
     },
     {
         "name": "App & Website Technical Issues",
@@ -159,8 +187,8 @@ def main():
                 'tweet_id': row['tweet_id'],
                 'conversation_id': row['conversation_id'],
                 'author_id': row['author_id'],
-                'original_customer_message': str(row['text']).strip(),
-                'normalized_message': str(row['normalized_text']).strip()
+                'original_customer_message': '\n'.join([line.rstrip() for line in str(row['text']).split('\n')]),
+                'normalized_message': '\n'.join([line.rstrip() for line in str(row['normalized_text']).split('\n')])
             })
             
     examples_df = pd.DataFrame(examples)
@@ -170,58 +198,21 @@ def main():
     print("Writing definitions report...")
     report_path = os.path.join(args.output_dir, 'intent_definitions.md')
     with open(report_path, 'w', encoding='utf-8') as f:
-        f.write("# Intent Definitions for AmazonHelp\n\n")
+        f.write("# Hiver AI Customer Support Agent\n\n")
+        f.write("## Intent Definitions for AmazonHelp\n\n")
         f.write("This document details the discovered customer-support intents based on keyword/heuristic classification of inbound customer messages in the AmazonHelp dataset.\n\n")
         
-        f.write("## Methodology & Limitations\n")
+        f.write("### Methodology & Limitations\n")
         f.write("- **Classification Rules**: Intent assignment uses deterministic regular expressions tested against normalized customer messages.\n")
-        f.write("- **Single-Label**: Messages are assigned EXACTLY ONE intent based on a strict priority order (highest risk/specificity first). For example, a message mentioning both a 'hacked account' and 'refund' is classified as Account/Security.\n")
-        f.write("- **Customer Messages Only**: AmazonHelp outbound replies are strictly excluded from these counts and examples.\n")
-        f.write("- **Ambiguity/Overlap**: Keywords like 'cancel' might apply to 'Returns & Refunds' or 'Prime Subscriptions'. Context-free keyword matching is a proxy and not ground-truth annotation.\n\n")
+        f.write("- **Single-Label**: Messages are assigned EXACTLY ONE intent based on a strict priority order (highest risk/specificity first).\n")
+        f.write("- **Limitations**: This is a deterministic regex/keyword baseline, NOT a true unsupervised machine-learning or embedding-based model. Future improvements should incorporate semantic embeddings for improved clustering.\n\n")
         
-        priority = 1
+        f.write("### Intent Taxonomy\n\n")
+        f.write("| Intent | Definition | Inclusion | Exclusion |\n")
+        f.write("|--------|------------|-----------|-----------|\n")
         for rule in INTENT_RULES:
-            intent_name = rule['name']
-            stats = dist[dist['intent'] == intent_name]
-            count = stats['message_count'].values[0] if not stats.empty else 0
-            pct = stats['percentage'].values[0] if not stats.empty else 0.0
-            
-            f.write(f"## {priority}. {intent_name}\n")
-            f.write(f"- **Definition**: {rule['definition']}\n")
-            f.write(f"- **Inclusion Criteria**: {rule['inclusion']} (Regex: `{rule['regex']}`)\n")
-            f.write(f"- **Exclusion Criteria**: {rule['exclusion']}\n")
-            f.write(f"- **Frequency**: {count} messages ({pct}%)\n")
-            f.write("- **Representative Examples**:\n")
-            
-            ex_subset = examples_df[examples_df['intent'] == intent_name]
-            if not ex_subset.empty:
-                for _, ex in ex_subset.iterrows():
-                    # Replace newlines in text to prevent breaking markdown lists
-                    clean_text = str(ex['original_customer_message']).replace('\n', ' ').strip()
-                    f.write(f"  - `{clean_text}` (Conv: {ex['conversation_id']})\n")
-            else:
-                f.write("  - *Not enough examples.*\n")
-            f.write("\n")
-            priority += 1
-            
-        # Add Other/Unclear
-        stats = dist[dist['intent'] == 'Other/Unclear']
-        count = stats['message_count'].values[0] if not stats.empty else 0
-        pct = stats['percentage'].values[0] if not stats.empty else 0.0
-        f.write(f"## {priority}. Other/Unclear\n")
-        f.write("- **Definition**: Messages that do not explicitly match any of the prioritized intent heuristics.\n")
-        f.write("- **Inclusion Criteria**: Fails to match any predefined regex rules.\n")
-        f.write("- **Exclusion Criteria**: Matches any predefined rule.\n")
-        f.write(f"- **Frequency**: {count} messages ({pct}%)\n")
-        f.write("- **Representative Examples**:\n")
-        ex_subset = examples_df[examples_df['intent'] == 'Other/Unclear']
-        if not ex_subset.empty:
-            for _, ex in ex_subset.iterrows():
-                clean_text = str(ex['original_customer_message']).replace('\n', ' ').strip()
-                f.write(f"  - `{clean_text}` (Conv: {ex['conversation_id']})\n")
-        else:
-            f.write("  - *Not enough examples.*\n")
-        f.write("\n")
+            f.write(f"| {rule['name']} | {rule['definition']} | {rule['inclusion']} | {rule['exclusion']} |\n")
+        f.write("| Other/Unclear | Messages that do not explicitly match any of the prioritized intent heuristics. | Fails to match any predefined regex rules. | Matches any predefined rule. |\n\n")
         
     print("Done! Phase 2 reports successfully generated.")
 
