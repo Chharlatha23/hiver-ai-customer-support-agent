@@ -1,3 +1,9 @@
 pandas
 numpy
-tabulate
+scikit-learn
+streamlit
+fastapi
+uvicorn
+pydantic
+joblib
+PyYAML

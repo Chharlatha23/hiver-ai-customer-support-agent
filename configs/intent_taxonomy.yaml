@@ -1,0 +1,87 @@
+intents:
+  - id: intent_delivery_delay
+    display_name: Delivery Delay
+    description: Customer is experiencing a delay or asking for order tracking
+    keywords: ["delay", "delayed", "late", "where is my", "not arrived", "tracking", "shipment"]
+    default_priority: High
+    routing_department: Delivery Support
+    escalation_rules: 
+      - pattern: "stolen|lost|missing"
+        escalate: true
+        reason: "Possible lost or stolen package"
+    safe_response: "I understand you are checking on your delivery. Please provide your order details so our team can investigate the current status."
+
+  - id: intent_refund_request
+    display_name: Refund Request
+    description: Customer wants to return an item or get a refund
+    keywords: ["refund", "return", "money back"]
+    default_priority: Medium
+    routing_department: Payments and Refunds
+    escalation_rules: []
+    safe_response: "We have received your request regarding a return or refund. Please provide your order details so our team can review it against our policies."
+
+  - id: intent_payment_issue
+    display_name: Payment Issue
+    description: Customer had an issue with payment, double charge, or billing
+    keywords: ["payment", "charged twice", "transaction", "billing"]
+    default_priority: High
+    routing_department: Payments and Refunds
+    escalation_rules:
+      - pattern: "fraud|unauthorized|stolen card"
+        escalate: true
+        reason: "Potential fraud or unauthorized payment claim"
+    safe_response: "I can help you with this billing inquiry. Please provide the transaction details so our support team can verify the payment status."
+
+  - id: intent_account_issue
+    display_name: Account Issue
+    description: Customer is locked out or needs account help
+    keywords: ["password", "login", "account locked", "hack", "compromise"]
+    default_priority: High
+    routing_department: Account Support
+    escalation_rules:
+      - pattern: "hack|compromise|stolen account"
+        escalate: true
+        reason: "Possible account compromise or security concern"
+    safe_response: "For security purposes, please use the 'Forgot Password' link on the login page. If your account is locked, please contact support with your registered email."
+
+  - id: intent_product_problem
+    display_name: Product or Order Problem
+    description: Customer received wrong or defective item
+    keywords: ["wrong item", "defective", "broken", "damaged", "missing parts"]
+    default_priority: Medium
+    routing_department: Product Support
+    escalation_rules:
+      - pattern: "dangerous|hurt|injured|fire"
+        escalate: true
+        reason: "Safety concern or injury"
+    safe_response: "We are sorry to hear there is an issue with your product. Please provide your order details and a description of the problem so our team can assist."
+
+  - id: intent_cancellation
+    display_name: Order Cancellation
+    description: Customer wants to cancel their order
+    keywords: ["cancel", "cancellation", "stop order"]
+    default_priority: Medium
+    routing_department: General Support
+    escalation_rules: []
+    safe_response: "I can help you with this request. Please provide your order details so the support team can verify if cancellation is still possible."
+
+  - id: intent_escalation
+    display_name: Customer Service Escalation
+    description: Customer explicitly asks for a human, manager, or complains about previous support
+    keywords: ["human", "agent", "manager", "supervisor", "representative", "call me", "useless", "terrible"]
+    default_priority: Critical
+    routing_department: Customer Service Escalation
+    escalation_rules:
+      - pattern: ".*"
+        escalate: true
+        reason: "Explicit request to speak with a human or strong dissatisfaction"
+    safe_response: "I apologize for any frustration. I am escalating your ticket to a human representative who will review your case and follow up shortly."
+
+  - id: intent_other
+    display_name: Other / Unknown
+    description: Uncategorized or ambiguous messages
+    keywords: []
+    default_priority: Low
+    routing_department: General Support
+    escalation_rules: []
+    safe_response: "Thank you for reaching out to AmazonHelp. A customer support representative will review your message and get back to you shortly."

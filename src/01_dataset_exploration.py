@@ -142,9 +142,7 @@ def evaluate_candidates(df, output_dir):
         no_support = len(set(brand_convs) - conv_has_outbound)
         
         # Optimized Usable pairs
-        # Safe fallback for missing dates if any
-        conv_df['created_at_dt'] = conv_df['created_at_dt'].fillna(pd.Timestamp('1970-01-01'))
-        conv_df = conv_df.sort_values(['conversation_id', 'created_at_dt', 'tweet_id'])
+        conv_df = conv_df.sort_values(['conversation_id', 'created_at_dt'])
         is_brand = conv_df['author_id'] == brand
         prev_is_not_brand = (conv_df['author_id'].shift(1) != brand) & (conv_df['conversation_id'] == conv_df['conversation_id'].shift(1))
         usable_pairs = int((is_brand & prev_is_not_brand).sum())
@@ -171,8 +169,7 @@ def evaluate_candidates(df, output_dir):
         })
         
     metrics_df = pd.DataFrame(candidate_metrics)
-    # Tie-breaking by brand name deterministically
-    metrics_df = metrics_df.sort_values(['usable_pairs', 'brand'], ascending=[False, True])
+    metrics_df = metrics_df.sort_values('usable_pairs', ascending=False)
     metrics_df.to_csv(os.path.join(output_dir, 'brand_candidates.csv'), index=False)
     
     return metrics_df
@@ -221,7 +218,9 @@ def write_selection_report(metrics_df, output_dir):
 
         f.write("### Justification\n")
         f.write("Usable-pair volume is the primary ranking criterion, followed by qualitative comparison:\n")
-        f.write("AmazonHelp was selected because it provides a large and diverse customer-support dataset, the highest usable inbound/outbound message-pair volume among the evaluated candidates, and substantial multi-turn conversation coverage. Although AppleSupport has a slightly higher unique-customer count, AmazonHelp offers stronger conversation depth and usable-pair volume for building and evaluating a support agent.\n\n")
+        f.write(f"- **Volume and Coverage**: Highest number of usable pairs ({selected_brand['usable_pairs']}) and a strong pair ratio ({selected_brand['pair_ratio_pct']}%). While the ranking is largely volume-dominated, the scale ensures sufficient examples for downstream tasks.\n")
+        f.write(f"- **Diversity**: Largest pool of unique customers ({selected_brand['unique_customers']}) and unique conversations ({selected_brand['unique_conversations']}), providing excellent diversity for intent discovery.\n")
+        f.write(f"- **Depth**: {selected_brand['multi_turn_convs']} multi-turn conversations (Multi-turn conversations provide contextual material for retrieval). The average conversation length is {selected_brand['avg_conv_length']} (Conversation length does not guarantee successful resolution).\n\n")
         
         f.write("### Rejection Reasons for Other Candidates\n")
         f.write("- **AppleSupport**: Rejected despite high pair ratios (88%) because it has half the multi-turn conversations of Amazon, limiting depth for retrieval.\n")
